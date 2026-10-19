@@ -1,0 +1,632 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Анкета на разработку бота для Discord, Telegram, Lolka и VK: опиши задачу и получи предварительную цену.">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Заявка на бота</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Russo+One&display=swap">
+<style>
+/* Layout: чертёж-«наряд на заказ» — одна колонка листа ТЗ на сетке, справа (внизу на телефоне) — живая смета */
+:root {
+  --paper: #f3f6fa;
+  --sheet: #ffffff;
+  --ink: #15233a;
+  --muted: #5b6b82;
+  --line: #d3dce8;
+  --grid: rgba(37, 84, 160, 0.07);
+  --blue: #2554a0;
+  --blue-soft: #e4ecf8;
+  --amber: #c9771a;
+  --ok: #217a4b;
+  --display: "Russo One", "Arial Black", system-ui, sans-serif;
+  --body: "Golos Text", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0d1626; --sheet: #121e33; --ink: #e3eaf5; --muted: #93a3bb; --line: #26364f;
+    --grid: rgba(120, 160, 230, 0.06); --blue: #7fa6ea; --blue-soft: #1b2b47; --amber: #f0a64a; --ok: #5cc68b;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0d1626; --sheet: #121e33; --ink: #e3eaf5; --muted: #93a3bb; --line: #26364f;
+  --grid: rgba(120, 160, 230, 0.06); --blue: #7fa6ea; --blue-soft: #1b2b47; --amber: #f0a64a; --ok: #5cc68b;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body {
+  margin: 0;
+  background: var(--paper);
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 24px 24px;
+  color: var(--ink);
+  font: 16px/1.55 var(--body);
+}
+.wrap {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 32px 64px;
+}
+header { display: grid; gap: 10px; margin-bottom: 28px; max-width: 700px; }
+.stamp {
+  font: 600 12px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase;
+  color: var(--blue); display: flex; gap: 12px; flex-wrap: wrap;
+}
+.stamp span { border: 1px solid var(--blue); padding: 5px 8px; border-radius: 3px; }
+h1 { font: 400 clamp(30px, 5vw, 46px)/1.08 var(--display); margin: 6px 0 0; text-wrap: balance; }
+.lead { color: var(--muted); margin: 0; font-size: 17px; max-width: 62ch; }
+
+.layout { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 24px; align-items: start; }
+@media (max-width: 880px) { .layout { grid-template-columns: minmax(0, 1fr); } }
+
+form { display: grid; gap: 16px; min-width: 0; }
+fieldset {
+  margin: 0; border: 1px solid var(--line); background: var(--sheet);
+  border-radius: 6px; padding: 20px 20px 22px; display: grid; gap: 14px; min-width: 0;
+}
+legend {
+  font: 600 12px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--blue);
+  background: var(--sheet); padding: 0 8px; margin-left: -8px;
+}
+.q { display: grid; gap: 6px; min-width: 0; }
+.q > label, .q > .qt { font-weight: 600; }
+.hint { color: var(--muted); font-size: 14px; font-weight: 400; }
+.req::after { content: " *"; color: var(--amber); }
+input[type="text"], textarea, select {
+  width: 100%; font: inherit; color: var(--ink); background: var(--paper);
+  border: 1px solid var(--line); border-radius: 4px; padding: 10px 12px;
+}
+textarea { min-height: 110px; resize: vertical; }
+input:focus-visible, textarea:focus-visible, select:focus-visible, button:focus-visible, .chip input:focus-visible + span {
+  outline: 2px solid var(--blue); outline-offset: 2px;
+}
+.row2 { display: grid; grid-template-columns: 180px minmax(0, 1fr); gap: 10px; }
+@media (max-width: 520px) { .row2 { grid-template-columns: minmax(0, 1fr); } }
+
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { position: relative; }
+.chip input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.chip span {
+  display: inline-flex; align-items: center; gap: 6px; padding: 8px 12px; border-radius: 4px;
+  border: 1px solid var(--line); background: var(--paper); cursor: pointer; font-size: 15px; user-select: none;
+}
+.chip input:checked + span { border-color: var(--blue); background: var(--blue-soft); color: var(--blue); font-weight: 600; }
+.chip input:checked + span::before { content: "✓"; font-family: var(--mono); }
+
+.feats { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 8px; }
+.feat { position: relative; }
+.feat input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.feat span {
+  display: grid; gap: 2px; height: 100%; padding: 10px 12px 10px 38px; border: 1px solid var(--line);
+  border-radius: 4px; background: var(--paper); cursor: pointer; position: relative;
+}
+.feat span::before {
+  content: ""; position: absolute; left: 12px; top: 13px; width: 16px; height: 16px;
+  border: 1.5px solid var(--muted); border-radius: 3px;
+}
+.feat b { font-weight: 600; font-size: 15px; }
+.feat small { color: var(--muted); font-size: 13px; line-height: 1.35; }
+.feat input:checked + span { border-color: var(--blue); background: var(--blue-soft); }
+.feat input:checked + span::before {
+  border-color: var(--blue); background: var(--blue);
+  box-shadow: inset 0 0 0 3px var(--blue-soft);
+}
+.feat input:focus-visible + span { outline: 2px solid var(--blue); outline-offset: 2px; }
+
+aside { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 16px); display: grid; gap: 16px; min-width: 0; }
+@media (max-width: 880px) { aside { position: static; } }
+.card { border: 1px solid var(--line); background: var(--sheet); border-radius: 6px; padding: 18px 20px; display: grid; gap: 10px; }
+.card h2 { font: 600 12px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--blue); margin: 0; }
+.price { font: 400 30px/1.1 var(--display); font-variant-numeric: tabular-nums; }
+.tier { display: inline-block; font: 600 12px/1 var(--mono); letter-spacing: .06em; text-transform: uppercase;
+  padding: 5px 8px; border-radius: 3px; background: var(--blue-soft); color: var(--blue); justify-self: start; }
+.lines { display: grid; gap: 4px; font: 13px/1.45 var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+.lines div { display: flex; justify-content: space-between; gap: 12px; }
+.lines div span:last-child { color: var(--ink); white-space: nowrap; }
+.note { font-size: 13px; color: var(--muted); margin: 0; }
+.monthly { font-size: 14px; border-top: 1px dashed var(--line); padding-top: 10px; }
+
+.btn {
+  font: 600 16px/1 var(--body); border: 0; border-radius: 4px; padding: 14px 16px; cursor: pointer;
+  background: var(--blue); color: var(--sheet); width: 100%;
+}
+.btn:hover { filter: brightness(1.08); }
+.btn.ghost { background: transparent; color: var(--blue); border: 1px solid var(--blue); }
+.status { font-size: 14px; min-height: 1.4em; margin: 0; }
+.status.ok { color: var(--ok); }
+.status.err { color: var(--amber); }
+
+.out { display: grid; gap: 10px; }
+.out pre {
+  margin: 0; white-space: pre-wrap; word-break: break-word; font: 13px/1.5 var(--mono);
+  background: var(--paper); border: 1px solid var(--line); border-radius: 4px; padding: 12px; max-height: 380px; overflow: auto;
+}
+.details { display: grid; gap: 10px; }
+.money { display: flex; align-items: center; gap: 8px; max-width: 260px; }
+.money input { font-variant-numeric: tabular-nums; font-size: 18px; font-weight: 600; }
+.money span { font: 400 20px/1 var(--display); color: var(--muted); }
+.budget-fit { margin: 0; font-size: 14px; padding: 4px 0 4px 10px; border-left: 3px solid var(--line); }
+.budget-fit.ok { color: var(--ok); border-color: var(--ok); }
+.budget-fit.low { color: var(--amber); border-color: var(--amber); }
+.warn { margin: 0; font-size: 14px; color: var(--amber); border-left: 3px solid var(--amber); padding: 4px 0 4px 10px; }
+.details label { font-size: 14px; font-weight: 600; color: var(--blue); }
+.steps { margin: 0; padding-left: 20px; display: grid; gap: 4px; font-size: 14px; color: var(--muted); }
+@media (prefers-reduced-motion: no-preference) { .chip span, .feat span, .btn { transition: background .15s, border-color .15s; } }
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="stamp"><span>Uncle_Wairon · боты на заказ</span><span>Discord · Telegram · Lolka · VK</span></div>
+    <h1>Заявка на бота</h1>
+    <p class="lead">Ответь на вопросы, это займёт 5 минут. Справа сразу видно примерную цену. В конце нажми «Скопировать заявку» и отправь её в чат, где мы общаемся. По заявке я составлю ТЗ и назову точную цену.</p>
+  </header>
+
+  <div class="layout">
+    <form id="brief" novalidate>
+      <fieldset>
+        <legend>Кто ты</legend>
+        <div class="q">
+          <label for="name" class="req">Имя или ник</label>
+          <input type="text" id="name" autocomplete="nickname" placeholder="Например, Артём или ArtemTanker">
+        </div>
+        <div class="q">
+          <span class="qt req">Где с тобой связаться</span>
+          <div class="row2">
+            <select id="contactType" aria-label="Мессенджер">
+              <option>Telegram</option><option>Discord</option><option>Kwork</option><option>VK</option><option>Другое</option>
+            </select>
+            <input type="text" id="contact" aria-label="Контакт" placeholder="@ник или ссылка">
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Где будет бот</legend>
+        <div class="q">
+          <span class="qt req">Платформа <span class="hint">· можно несколько</span></span>
+          <div class="chips" id="platforms">
+            <label class="chip"><input type="checkbox" id="pl-discord" value="Discord"><span>Discord</span></label>
+            <label class="chip"><input type="checkbox" id="pl-telegram" value="Telegram"><span>Telegram</span></label>
+            <label class="chip"><input type="checkbox" id="pl-lolka" value="Lolka"><span>Lolka</span></label>
+            <label class="chip"><input type="checkbox" id="pl-vk" value="VK"><span>VK</span></label>
+            <label class="chip"><input type="checkbox" id="pl-site" value="Сайт или магазин"><span>Сайт или магазин</span></label>
+            <label class="chip"><input type="checkbox" id="pl-other" value="Другое"><span>Другое</span></label>
+          </div>
+        </div>
+        <div class="q">
+          <label for="project">Для чего бот</label>
+          <select id="project">
+            <option value="">Выбери…</option>
+            <option>Игровой клан или сообщество</option>
+            <option>Канал или сервер стримера</option>
+            <option>Магазин или бизнес</option>
+            <option>Учёба или работа</option>
+            <option>Другое</option>
+          </select>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Что бот должен делать</legend>
+        <div class="q">
+          <label for="task" class="req">Опиши своими словами <span class="hint">· как объяснил бы другу</span></label>
+          <textarea id="task" placeholder="Например: чтобы новичкам сам выдавал роль, а по команде !стата показывал статистику игрока. Ещё нужны сборы на ивенты с кнопками «иду / не иду»."></textarea>
+        </div>
+        <div class="q">
+          <span class="qt">Что из этого нужно <span class="hint">· отметь всё подходящее</span></span>
+          <div class="feats" id="feats"></div>
+          <p class="warn" id="tooMany" hidden>Отмечено почти всё. Оставь только то, без чего бот точно не нужен: так цена будет честнее, а бот — проще.</p>
+          <p class="warn" id="siteNote" hidden>Сайт и магазин считаются отдельно от ботов, поэтому цену я назову после разговора. Часто вместо сайта хватает Telegram-бота-магазина: он дешевле и делается быстрее.</p>
+        </div>
+        <div class="q" id="detailsBox" hidden>
+          <span class="qt">Уточни по выбранным функциям <span class="hint">· пара слов на каждую, это ускорит работу</span></span>
+          <div id="details" class="details"></div>
+        </div>
+        <div class="q">
+          <label for="example">Есть бот, который нравится? <span class="hint">· название или ссылка</span></label>
+          <input type="text" id="example" placeholder="Например, как MEE6, но проще">
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Детали</legend>
+        <div class="q">
+          <span class="qt">Это новый бот?</span>
+          <div class="chips">
+            <label class="chip"><input type="radio" name="origin" id="or-new" value="Новый бот с нуля"><span>Новый, с нуля</span></label>
+            <label class="chip"><input type="radio" name="origin" id="or-fix" value="Доработать существующего бота"><span>Доработать существующего</span></label>
+            <label class="chip"><input type="radio" name="origin" id="or-copy" value="Повторить бота с другой платформы"><span>Перенести с другой платформы</span></label>
+          </div>
+        </div>
+        <div class="q">
+          <label for="size">Сколько людей на сервере или в канале</label>
+          <select id="size">
+            <option value="">Выбери…</option>
+            <option>До 50</option>
+            <option>50–500</option>
+            <option>500–5 000</option>
+            <option>Больше 5 000</option>
+          </select>
+        </div>
+        <div class="q">
+          <span class="qt">Как вызывать команды</span>
+          <div class="chips">
+            <label class="chip"><input type="radio" name="cmds" id="cm-slash" value="Слэш-команды (/команда)"><span>/команда</span></label>
+            <label class="chip"><input type="radio" name="cmds" id="cm-prefix" value="С префиксом (!команда)"><span>!команда</span></label>
+            <label class="chip"><input type="radio" name="cmds" id="cm-buttons" value="Только кнопки и меню"><span>Только кнопки</span></label>
+            <label class="chip"><input type="radio" name="cmds" id="cm-any" value="Не важно"><span>Не важно</span></label>
+          </div>
+        </div>
+        <div class="q">
+          <span class="qt">Кто пользуется ботом</span>
+          <div class="chips" data-radio="users">
+            <label class="chip"><input type="radio" name="users" id="us-all" value="Все участники"><span>Все участники</span></label>
+            <label class="chip"><input type="radio" name="users" id="us-admins" value="Только админы"><span>Только админы</span></label>
+            <label class="chip"><input type="radio" name="users" id="us-roles" value="Разные права по ролям"><span>Разные права по ролям</span></label>
+          </div>
+        </div>
+        <div class="q">
+          <span class="qt">Где бот будет работать</span>
+          <div class="chips">
+            <label class="chip"><input type="radio" name="hosting" id="ho-pc" value="На моём компьютере"><span>На моём компьютере</span></label>
+            <label class="chip"><input type="radio" name="hosting" id="ho-host" value="Нужен хостинг 24/7"><span>Нужен хостинг 24/7</span></label>
+            <label class="chip"><input type="radio" name="hosting" id="ho-idk" value="Не знаю, подскажи"><span>Не знаю, подскажи</span></label>
+          </div>
+          <span class="hint">На компьютере бот работает, только пока он включён. Хостинг — круглосуточно, это отдельная ежемесячная плата.</span>
+        </div>
+        <div class="q">
+          <span class="qt">Сроки</span>
+          <div class="chips">
+            <label class="chip"><input type="radio" name="deadline" id="dl-rush" value="Срочно, до 3 дней"><span>Срочно, до 3 дней</span></label>
+            <label class="chip"><input type="radio" name="deadline" id="dl-week" value="В течение недели"><span>В течение недели</span></label>
+            <label class="chip"><input type="radio" name="deadline" id="dl-any" value="Не горит"><span>Не горит</span></label>
+          </div>
+        </div>
+        <div class="q">
+          <label for="budget">Сколько готов заплатить <span class="hint">· в рублях</span></label>
+          <div class="money">
+            <input type="text" id="budget" inputmode="numeric" placeholder="Например, 5000" autocomplete="off">
+            <span>₽</span>
+          </div>
+          <div class="chips">
+            <label class="chip"><input type="checkbox" id="budgetAsk" value="1"><span>Не знаю, подскажи</span></label>
+          </div>
+          <p class="budget-fit" id="budgetFit" hidden></p>
+        </div>
+        <div class="q">
+          <label for="extra">Что-то ещё? <span class="hint">· дизайн, язык, пожелания</span></label>
+          <textarea id="extra" style="min-height:80px"></textarea>
+        </div>
+      </fieldset>
+    </form>
+
+    <aside>
+      <div class="card" aria-live="polite">
+        <h2>Предварительная смета</h2>
+        <div class="price" id="price">от 2 000 ₽</div>
+        <span class="tier" id="tier">Простой бот</span>
+        <div class="lines" id="lines"></div>
+        <div class="monthly" id="monthly" hidden></div>
+        <p class="note">Это примерная оценка. Точную цену я назову после ТЗ. Оплата: 50% до начала работы, 50% после сдачи.</p>
+      </div>
+
+      <div class="card out">
+        <h2>Готовая заявка</h2>
+        <button type="button" class="btn" id="copy">Скопировать заявку</button>
+        <p class="status" id="status"></p>
+        <ol class="steps">
+          <li>Нажми «Скопировать заявку».</li>
+          <li>Вставь текст в чат, где мы общаемся.</li>
+          <li>Я пришлю ТЗ и точную цену. Работа начинается, когда ты подтвердишь ТЗ.</li>
+        </ol>
+        <pre id="preview" tabindex="0" aria-label="Текст заявки"></pre>
+        <button type="button" class="btn ghost" id="reset">Очистить анкету</button>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<script>
+// Функции: [id, название, пояснение, цена от, цена до]
+const FEATURES = [
+  ["mod", "Модерация", "мут, бан, предупреждения, фильтр слов", 1500, 3000],
+  ["roles", "Роли", "автовыдача, роли по кнопке или реакции", 800, 1500],
+  ["welcome", "Приветствие", "сообщение и правила новичкам", 500, 1000],
+  ["music", "Музыка", "плеер в голосовом канале", 2500, 5000],
+  ["stats", "Статистика из игры", "WN8, ранги, профили игроков", 2000, 4000],
+  ["events", "Сборы и ивенты", "запись кнопками, напоминания", 1500, 3000],
+  ["tickets", "Тикеты и поддержка", "заявки в отдельных каналах", 1500, 3000],
+  ["polls", "Опросы и голосования", "кнопки, итоги, таймер", 800, 1500],
+  ["notify", "Уведомления", "стримы, видео YouTube, новости", 1500, 3000],
+  ["economy", "Экономика и мини-игры", "монеты, магазин, уровни", 3000, 6000],
+  ["parse", "Данные с сайта", "парсинг, цены, объявления", 2500, 5000],
+  ["pay", "Приём оплаты", "подписки, платные роли", 4000, 8000],
+  ["panel", "Панель управления", "настройки бота в браузере", 6000, 12000],
+  ["other", "Другое", "опишу в задаче", 0, 0],
+];
+const BASE = [1500, 2500];
+// Уточняющий вопрос по каждой функции — появляется, когда её отметили
+const DETAILS = {
+  mod: "Что считать нарушением и какие наказания?",
+  roles: "Какие роли и за что их выдавать?",
+  welcome: "Что написать новичку, в какой канал?",
+  music: "Откуда музыка: YouTube, Яндекс Музыка, свои файлы?",
+  stats: "Какая игра и какие данные показывать?",
+  events: "Какие сборы, сколько человек, нужны ли напоминания?",
+  tickets: "Кто отвечает на тикеты, какие темы обращений?",
+  polls: "Кто создаёт опросы, нужен ли таймер?",
+  notify: "Откуда уведомления: ссылки на каналы или сайты",
+  economy: "За что дают монеты и на что их тратить?",
+  parse: "Ссылка на сайт и какие данные оттуда брать",
+  pay: "Как принимать оплату и что получает покупатель?",
+  panel: "Что нужно настраивать в панели?",
+  other: "Что ещё нужно?",
+};
+
+const $ = (id) => document.getElementById(id);
+const featBox = $("feats");
+for (const [id, name, desc] of FEATURES) {
+  const l = document.createElement("label");
+  l.className = "feat";
+  l.innerHTML = `<input type="checkbox" id="f-${id}" value="${id}"><span><b></b><small></small></span>`;
+  l.querySelector("b").textContent = name;
+  l.querySelector("small").textContent = desc;
+  featBox.append(l);
+}
+const detailsWrap = $("details");
+for (const [id, name] of FEATURES) {
+  const q = document.createElement("div");
+  q.className = "q";
+  q.id = "dq-" + id;
+  q.hidden = true;
+  q.innerHTML = `<label for="d-${id}"></label><input type="text" id="d-${id}">`;
+  q.querySelector("label").textContent = name;
+  q.querySelector("input").placeholder = DETAILS[id];
+  detailsWrap.append(q);
+}
+
+const rub = (n) => Math.round(n / 100) * 100;
+function budgetValue() {
+  if ($("budgetAsk").checked) return 0;
+  const raw = $("budget").value.replace(/[^\d]/g, "");
+  const n = parseInt(raw, 10);
+  return Number.isFinite(n) && n > 0 ? Math.min(n, 10000000) : 0;
+}
+const fmt = (n) => rub(n).toLocaleString("ru-RU").replace(/ /g, " ") + " ₽";
+const checked = (sel) => [...document.querySelectorAll(sel + ":checked")].map((x) => x.value);
+const radio = (name) => (document.querySelector(`input[name="${name}"]:checked`) || {}).value || "";
+
+function estimate() {
+  const feats = FEATURES.filter(([id]) => $("f-" + id).checked);
+  let lo = BASE[0], hi = BASE[1];
+  const lines = [["Основа: запуск, команды, установщик", BASE[0], BASE[1]]];
+  for (const [, name, , a, b] of feats) {
+    if (!a) continue;
+    lo += a; hi += b;
+    lines.push([name, a, b]);
+  }
+  const plats = checked("#platforms input");
+  const coreHi = hi; // сложность самого бота — без надбавок за платформы и срочность
+  if (plats.length > 1) {
+    const k = 0.4 * (plats.length - 1);
+    lines.push([`Ещё платформ: ${plats.length - 1}`, lo * k, hi * k]);
+    lo *= 1 + k; hi *= 1 + k;
+  }
+  if (radio("deadline") === "Срочно, до 3 дней") {
+    lines.push(["Срочность +30%", lo * 0.3, hi * 0.3]);
+    lo *= 1.3; hi *= 1.3;
+  }
+  const tier = coreHi <= 5000 ? "Простой бот" : coreHi <= 12000 ? "Средний бот" : "Сложный бот";
+  const site = $("pl-site").checked;
+  const flags = [];
+  if (site) flags.push("Клиент выбрал «Сайт или магазин»: возможно, нужен не бот. Предложить Telegram-бот-магазин или оценить сайт отдельно.");
+  if (feats.length >= 8) flags.push(`Отмечено ${feats.length} функций из ${FEATURES.length}: похоже, отмечал не глядя. Уточнить, что реально нужно.`);
+  const task = $("task").value.trim();
+  const words = (task.match(/[а-яёa-z]{2,}/gi) || []).length;
+  if (task && words < 3) flags.push("Задача не описана: в поле почти нет слов, похоже на тест или случайный ввод.");
+  else if (task.length < 40) flags.push("Описание задачи очень короткое.");
+  const contact = $("contact").value.trim(), ctype = $("contactType").value;
+  if (contact && ctype === "Telegram" && !/^@?[a-z][a-z0-9_]{4,31}$/i.test(contact) && !/t\.me\//i.test(contact) && !/^\+?\d{10,15}$/.test(contact.replace(/[\s()-]/g, "")))
+    flags.push("Контакт не похож на Telegram: ник — от 5 латинских букв, или номер телефона.");
+  if (/^\d+$/.test($("name").value.trim())) flags.push("Имя — только цифры.");
+  if (radio("origin") === "Повторить бота с другой платформы" && !$("example").value.trim())
+    flags.push("Нужно повторить бота, но не указано какого: попросить название или ссылку.");
+  if (plats.length >= 3 && radio("deadline") === "Срочно, до 3 дней")
+    flags.push(`${plats.length} платформы за 3 дня — нереально: предложить сначала одну платформу, остальные потом.`);
+  if ($("f-other").checked && !$("d-other").value.trim() && !/друг|ещё|еще|также/i.test(task))
+    flags.push("Отмечена функция «Другое», но не сказано, что именно.");
+  if (radio("hosting") === "Нужен хостинг 24/7") flags.push("Нужен хостинг: назвать ежемесячную цену отдельно.");
+  if (plats.includes("Другое")) flags.push("Платформа «Другое»: уточнить, какая именно.");
+  const budget = budgetValue();
+  if (budget && !site) {
+    if (budget < lo * 0.6) flags.push(`Бюджет ${fmt(budget)} сильно ниже оценки: предложить упрощённую версию или разбить на этапы.`);
+    else if (budget < lo) flags.push(`Бюджет ${fmt(budget)} немного ниже оценки: убрать 1–2 функции или договориться.`);
+  }
+  if (budget && budget < 500) flags.push("Сумма подозрительно маленькая: возможно, опечатка.");
+  return { lo, hi, lines, tier, feats, plats, site, flags, unknown: feats.some(([id]) => id === "other") };
+}
+
+// Формат заявки: одинаковые поля в одном порядке, «не указано» вместо пропусков —
+// по нему сразу пишется ТЗ и видно, что нужно уточнить у клиента.
+function briefText(e) {
+  const v = (id) => $(id).value.trim();
+  const na = "не указано";
+  const out = [];
+  out.push("=== ЗАЯВКА НА БОТА (форма v5) ===");
+  out.push(`Дата: ${new Date().toLocaleDateString("ru-RU")}`);
+  out.push("");
+  out.push("[КЛИЕНТ]");
+  out.push(`Имя: ${v("name") || na}`);
+  out.push(`Связь: ${$("contactType").value}: ${v("contact") || na}`);
+  out.push("");
+  out.push("[ПРОЕКТ]");
+  out.push(`Платформы: ${e.plats.join(", ") || na}`);
+  out.push(`Назначение: ${v("project") || na}`);
+  out.push(`Тип работы: ${radio("origin") || na}`);
+  out.push(`Размер аудитории: ${v("size") || na}`);
+  out.push(`Пример бота: ${v("example") || na}`);
+  out.push("");
+  out.push("[ЗАДАЧА СЛОВАМИ КЛИЕНТА]");
+  out.push(v("task") || na);
+  out.push("");
+  out.push("[ФУНКЦИИ]");
+  if (!e.feats.length) out.push(na);
+  for (const [id, name] of e.feats) out.push(`- ${name}: ${v("d-" + id) || "без уточнений"}`);
+  out.push("");
+  out.push("[УСЛОВИЯ]");
+  out.push(`Кто пользуется: ${radio("users") || na}`);
+  out.push(`Команды: ${radio("cmds") || na}`);
+  out.push(`Где работает: ${radio("hosting") || na}`);
+  out.push(`Сроки: ${radio("deadline") || na}`);
+  const bv = budgetValue();
+  out.push(`Бюджет клиента: ${$("budgetAsk").checked ? "не знает, просит подсказать" : bv ? fmt(bv) : na}`);
+  out.push(`Пожелания: ${v("extra") || na}`);
+  out.push("");
+  out.push("[ОЦЕНКА ФОРМЫ]");
+  out.push(e.site ? "Сайт: оценка вручную" : `${fmt(e.lo)} – ${fmt(e.hi)}, ${e.tier.toLowerCase()}${e.unknown ? ", есть доп. функции" : ""}`);
+  out.push("");
+  out.push("[ПОМЕТКИ ФОРМЫ]");
+  if (!e.flags.length) out.push("нет");
+  for (const f of e.flags) out.push("! " + f);
+  out.push("=== КОНЕЦ ЗАЯВКИ ===");
+  return out.join("\n");
+}
+
+function syncDetails() {
+  let any = false;
+  for (const [id] of FEATURES) {
+    const on = $("f-" + id).checked;
+    $("dq-" + id).hidden = !on;
+    any = any || on;
+  }
+  $("detailsBox").hidden = !any;
+}
+
+function render() {
+  syncDetails();
+  const e = estimate();
+  $("price").textContent = e.site ? "После обсуждения" : `${fmt(e.lo)} – ${fmt(e.hi)}`;
+  $("tier").textContent = e.site ? "Сайт или магазин" : e.tier + (e.unknown ? " + доп. функции" : "");
+  $("lines").hidden = e.site;
+  $("tooMany").hidden = e.feats.length < 8;
+  $("siteNote").hidden = !e.site;
+  $("budget").disabled = $("budgetAsk").checked;
+  const fit = $("budgetFit"), bv = budgetValue();
+  fit.hidden = !bv || e.site;
+  if (bv && !e.site) {
+    if (bv >= e.lo) { fit.className = "budget-fit ok"; fit.textContent = "Сумма укладывается в оценку — всё отмеченное можно сделать."; }
+    else if (bv >= e.lo * 0.6) { fit.className = "budget-fit low"; fit.textContent = "Чуть ниже оценки. Можно убрать 1–2 функции или обсудим."; }
+    else { fit.className = "budget-fit low"; fit.textContent = "За эту сумму получится упрощённая версия. Предложу, с чего начать, а остальное можно добавить потом."; }
+  }
+  const box = $("lines");
+  box.replaceChildren();
+  for (const [name, a, b] of e.lines) {
+    const row = document.createElement("div");
+    const l = document.createElement("span"); l.textContent = name;
+    const r = document.createElement("span"); r.textContent = `${fmt(a)}–${fmt(b)}`;
+    row.append(l, r); box.append(row);
+  }
+  const host = radio("hosting");
+  $("monthly").hidden = host !== "Нужен хостинг 24/7";
+  $("monthly").textContent = "Хостинг и поддержка: 300–500 ₽ в месяц, отдельно от разработки.";
+  $("preview").textContent = briefText(e);
+  saveDraft();
+}
+
+// Черновик в этом браузере, чтобы ответы не пропали при перезагрузке
+const DRAFT = "bot-brief-draft-v4";
+function fields() { return [...document.querySelectorAll("#brief input, #brief textarea, #brief select")]; }
+function saveDraft() {
+  try {
+    const d = {};
+    for (const el of fields()) d[el.id] = el.type === "checkbox" || el.type === "radio" ? el.checked : el.value;
+    localStorage.setItem(DRAFT, JSON.stringify(d));
+  } catch (_) {}
+}
+function loadDraft() {
+  try {
+    const d = JSON.parse(localStorage.getItem(DRAFT) || "null");
+    if (!d) return;
+    for (const el of fields()) {
+      if (!(el.id in d)) continue;
+      if (el.type === "checkbox" || el.type === "radio") el.checked = !!d[el.id]; else el.value = d[el.id];
+    }
+  } catch (_) {}
+}
+
+function missing() {
+  const m = [];
+  if (!$("name").value.trim()) m.push("имя");
+  if (!$("contact").value.trim()) m.push("контакт");
+  if (!checked("#platforms input").length) m.push("платформу");
+  if (!$("task").value.trim()) m.push("что должен делать бот");
+  return m;
+}
+
+function selectPreview() {
+  const r = document.createRange(); r.selectNodeContents($("preview"));
+  const s = getSelection(); s.removeAllRanges(); s.addRange(r);
+}
+
+$("copy").addEventListener("click", () => {
+  const st = $("status");
+  const m = missing();
+  if (m.length) {
+    st.className = "status err";
+    st.textContent = "Заполни ещё: " + m.join(", ") + ".";
+    return;
+  }
+  const text = $("preview").textContent;
+  const done = () => { st.className = "status ok"; st.textContent = "Скопировано. Вставь текст в чат со мной."; };
+  const fallback = () => {
+    selectPreview();
+    st.className = "status err";
+    st.textContent = "Не получилось скопировать само. Текст ниже выделен — нажми Ctrl+C (на телефоне — «Копировать»).";
+  };
+  try {
+    navigator.clipboard.writeText(text).then(done, fallback);
+  } catch (_) { fallback(); }
+});
+
+let armed = false;
+$("reset").addEventListener("click", () => {
+  if (!armed) {
+    armed = true;
+    $("reset").textContent = "Точно очистить? Нажми ещё раз";
+    setTimeout(() => { armed = false; $("reset").textContent = "Очистить анкету"; }, 4000);
+    return;
+  }
+  armed = false;
+  $("reset").textContent = "Очистить анкету";
+  for (const el of fields()) {
+    if (el.type === "checkbox" || el.type === "radio") el.checked = false;
+    else if (el.tagName === "SELECT") el.selectedIndex = 0;
+    else el.value = "";
+  }
+  $("status").textContent = "";
+  render();
+});
+
+$("brief").addEventListener("input", render);
+$("brief").addEventListener("change", render);
+$("brief").addEventListener("submit", (ev) => ev.preventDefault());
+loadDraft();
+render();
+</script>
+
+</body>
+</html>
